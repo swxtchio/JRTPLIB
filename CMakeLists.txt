@@ -36,6 +36,24 @@ include(${PROJECT_SOURCE_DIR}/cmake/Macros.cmake)
 
 find_package(JThread)
 
+# Set compiler options.
+set(variables
+	CMAKE_C_FLAGS_DEBUG
+	CMAKE_C_FLAGS_MINSIZEREL
+	CMAKE_C_FLAGS_RELEASE
+	CMAKE_C_FLAGS_RELWITHDEBINFO
+	CMAKE_CXX_FLAGS_DEBUG
+	CMAKE_CXX_FLAGS_MINSIZEREL
+	CMAKE_CXX_FLAGS_RELEASE
+	CMAKE_CXX_FLAGS_RELWITHDEBINFO
+)
+
+foreach(variable ${variables})
+	if(${variable} MATCHES "/MD")
+		string(REGEX REPLACE "/MD" "/MT" ${variable} "${${variable}}")
+	endif()
+endforeach()
+
 set(JRTPLIB_LINK_LIBS "")
 set(JRTPLIB_INTERNAL_INCLUDES "")
 set(JRTPLIB_EXTERNAL_INCLUDES "")
@@ -223,7 +241,7 @@ endif()
 if (NOT MSVC)
 	set(JRTPLIB_LIBS "-L${LIBRARY_INSTALL_DIR}" "-ljrtp")
 else ()
-	set(JRTPLIB_LIBS optimized "${LIBRARY_INSTALL_DIR}/jrtplib.lib" 
+	set(JRTPLIB_LIBS optimized "${LIBRARY_INSTALL_DIR}/jrtplib.lib"
 		         debug "${LIBRARY_INSTALL_DIR}/jrtplib_d.lib")
 endif ()
 
